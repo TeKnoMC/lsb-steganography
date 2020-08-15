@@ -130,3 +130,6 @@ dmypy.json
 
 # VS code
 .vscode/
+
+# Test files for project
+test-files/
