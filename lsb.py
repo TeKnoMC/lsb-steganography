@@ -15,10 +15,12 @@ inject
 	-d/--data            The data file to be hidden
 """
 
-from PIL import Image, UnidentifiedImageError
-from args import Command, ArgumentsParser
-from bitstring import Bits
 import sys
+
+from bitstring import Bits
+from PIL import Image, UnidentifiedImageError
+
+from args import ArgumentsParser, Command
 
 END_SIGNAL = bin(int.from_bytes(b"MSGEND", byteorder="big"))[2:]
 END_SIGNAL = END_SIGNAL.zfill(((len(END_SIGNAL) // 8) + 1) * 8)
