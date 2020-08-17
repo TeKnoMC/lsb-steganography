@@ -96,7 +96,7 @@ def lsb_inject_data(image, data, channels):
                 pix = [c for c in pixels[x, y]]
                 numOfChannels = len(channels)
                 if idx + len(channels) > len(data):
-                    numOfChannels -= idx
+                    numOfChannels = len(data) - idx
 
                 for i in range(numOfChannels):
                     pix[channels[i]] = pix[channels[i]] & 0xfe | int(data[idx + i])
@@ -116,8 +116,8 @@ def inject(image_filename, output_filename, data_filename, colourChannels):
 
     binary_data = data + END_SIGNAL
 
-    if len(binary_data) > image.size[0] * image.size[1]:
-        error(f"{data_filename} is too large to be stored inside {image_filename}. Max size is {(image.size[0] * image.size[1]) // 8}")
+    if len(binary_data) > image.size[0] * image.size[1] * len(colourChannels):
+        error(f"{data_filename} is too large to be stored inside {image_filename}. Max size is {(image.size[0] * image.size[1]) // 8} bytes in 1 channel, {(image.size[0] * image.size[1]) // 8 * 2} in 2, and {(image.size[0] * image.size[1]) // 8 * 3} in 3.")
 
     lsb_inject_data(image, binary_data, colourChannels)
 
