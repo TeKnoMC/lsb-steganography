@@ -9,10 +9,12 @@ Available commands:
 extract
 	-i/--image           The image file to be used
 	-o/--output          The filename to write the extracted file under
+	-c/--channel         The colour channel(s) to extract the data from (e.g. -c RG)
 inject
 	-i/--image           The image file to be used
 	-o/--output          The filename to write the final image to
 	-d/--data            The data file to be hidden
+	-c/--channel         The colour channel(s) to inject the data into (e.g. -c RG)
 """
 
 import sys
@@ -39,7 +41,7 @@ def readImage(image_filename):
 
 def parseChannels(channelSwitches):
     channels = []
-    for channel in channelSwitches:
+    for channel in channelSwitches.upper():
         if channel == "R":
             if 0 in channels:
                 error(f"Duplicate channel: {channel}")
@@ -67,9 +69,6 @@ def extract(image_filename, output_filename, colourChannels):
 
     for y in range(image.size[1]):
         for x in range(image.size[0]):
-            #blue_byte = pixels[x, y][2]
-            #reconstructed_bin.append(str(blue_byte % 2))
-
             for channel in colourChannels:
                 reconstructed_bin.append(str(pixels[x, y][channel] % 2))
 
@@ -91,12 +90,10 @@ def lsb_inject_data(image, data, channels):
     idx = 0
     for y in range(image.size[1]):
         for x in range(image.size[0]):
-            #idx = x + y * image.size[0] + len(channels) - 1
             if idx >= len(data):
                 return
             else:
                 pix = [c for c in pixels[x, y]]
-
                 numOfChannels = len(channels)
                 if idx + len(channels) > len(data):
                     numOfChannels -= idx
@@ -106,8 +103,6 @@ def lsb_inject_data(image, data, channels):
 
                 pixels[x, y] = tuple(pix)
                 idx += len(channels)
-
-                #pixels[x, y] = (pixels[x, y][0], pixels[x, y][1], pixels[x, y][2] & 0xfe | int(data[idx]))
 
 def inject(image_filename, output_filename, data_filename, colourChannels):
     image = readImage(image_filename)
@@ -145,13 +140,13 @@ if __name__ == "__main__":
     extract_cmd = Command("extract")
     extract_cmd.add_arg("-i", "--image", description="The image file to be used")
     extract_cmd.add_arg("-o", "--output", default="output.bin", description="The filename to write the extracted file under")
-    extract_cmd.add_arg("-c", "--channel", default="B", description="The colour channel(s) to extract the data from (e.g. -c R")
+    extract_cmd.add_arg("-c", "--channel", default="B", description="The colour channel(s) to extract the data from (e.g. -c RG)")
 
     inject_cmd = Command("inject")
     inject_cmd.add_arg("-i", "--image", description="The image file to be used")
     inject_cmd.add_arg("-o", "--output", default="output.png", description="The filename to write the final image to")
     inject_cmd.add_arg("-d", "--data", description="The data file to be hidden")
-    inject_cmd.add_arg("-c", "--channel", default="B", description="The colour channel(s) to inject the data into (e.g. -c R")
+    inject_cmd.add_arg("-c", "--channel", default="B", description="The colour channel(s) to inject the data into (e.g. -c RG)")
 
     parser = ArgumentsParser()
     parser.add_command(extract_cmd)

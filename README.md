@@ -16,8 +16,10 @@ Available commands:
 extract
 	-i/--image           The image file to be used
 	-o/--output          The filename to write the extracted file under
+	-c/--channel         The colour channel(s) to extract the data from (e.g. -c RG)
 inject
 	-i/--image           The image file to be used
 	-o/--output          The filename to write the final image to
 	-d/--data            The data file to be hidden
+	-c/--channel         The colour channel(s) to inject the data into (e.g. -c RG)
 ```
